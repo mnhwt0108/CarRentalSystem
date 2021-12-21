@@ -1,14 +1,12 @@
-import java.util.Arrays;
-
 public class Car {
-    private int id, numOfDoor;
+    private int carID, numOfDoor;
     private String model, group, fuel;
     private boolean rentalStatus, maintenanceStatus;
-    private RentalRecord records[] = new RentalRecord[10];
+    protected RentalRecord records[] = new RentalRecord[10];
 
-    public Car(int id, int numOfDoor, String model, String group, String fuel, boolean rentalStatus,
+    public Car(int carID, int numOfDoor, String model, String group, String fuel, boolean rentalStatus,
             boolean maintenanceStatus) {
-        this.id = id;
+        this.carID = carID;
         this.numOfDoor = numOfDoor;
         this.model = model;
         this.group = group;
@@ -17,16 +15,16 @@ public class Car {
         this.maintenanceStatus = maintenanceStatus;
     }
 
+    public int getCarID() {
+        return carID;
+    }
+
+    public void setCarID(int carID) {
+        this.carID = carID;
+    }
+
     public Car() {
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getNumOfDoor() {
@@ -77,19 +75,71 @@ public class Car {
         this.maintenanceStatus = maintenanceStatus;
     }
 
+    @Override
+    public String toString() {
+        return "Car [carID=" + carID + ", fuel=" + fuel + ", group=" + group + ", maintenanceStatus="
+                + maintenanceStatus + ", model=" + model + ", numOfDoor=" + numOfDoor + ", rentalStatus=" + rentalStatus
+                + "]";
+    }
+
+    public boolean rent(String customerId, DateTime rentDate, int numOfRentDay) {
+        String groupOfCar = this.getGroup();
+        int recordIndex = this.getLastElementIndex() + 1;
+
+        if (this.isMaintenanceStatus() == true || this.isRentalStatus() == true) {
+            return false;
+
+        } else {
+            String rentId = this.getCarID() +
+                    "_" + customerId +
+                    "_" + rentDate.getEightDigitDate();
+
+            this.records[recordIndex] = new RentalRecord(rentId, rentDate,
+                    new DateTime(rentDate, numOfRentDay));
+            this.rentalStatus = true;
+        }
+
+        switch (groupOfCar) {
+            case "A":
+                this.records[recordIndex].setRentalFee(1.0);
+                break;
+
+            case "B":
+                this.records[recordIndex].setRentalFee(2.0);
+                break;
+
+            case "C":
+                this.records[recordIndex].setRentalFee(3.0);
+                break;
+
+            case "D":
+                this.records[recordIndex].setRentalFee(4.0);
+                break;
+
+            case "E":
+                this.records[recordIndex].setRentalFee(5.0);
+                break;
+        }
+
+        return true;
+    }
+
+    /**
+     * Method used to get last element index
+     */
+    public int getLastElementIndex() {
+        int index = 0;
+        for (index = 0; this.records[index] != null; index++)
+            ;
+        return index - 1;
+    }
+
     public RentalRecord[] getRecords() {
         return records;
     }
 
     public void setRecords(RentalRecord[] records) {
         this.records = records;
-    }
-
-    @Override
-    public String toString() {
-        return "Car [fuel=" + fuel + ", group=" + group + ", id=" + id + ", maintenanceStatus=" + maintenanceStatus
-                + ", model=" + model + ", numOfDoor=" + numOfDoor + ", records=" + Arrays.toString(records)
-                + ", rentalStatus=" + rentalStatus + "]";
     }
 
     /*

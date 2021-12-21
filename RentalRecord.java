@@ -1,6 +1,5 @@
 public class RentalRecord {
     private String rentId;
-    private Car car;
     private DateTime rentDate, ExpectedReturnDate, ActualReturnDate;
     private Double rentalFee, lateFee;
 
@@ -30,14 +29,6 @@ public class RentalRecord {
 
     public void setExpectedReturnDate(DateTime expectedReturnDate) {
         ExpectedReturnDate = expectedReturnDate;
-    }
-
-    public Car getCar() {
-        return car;
-    }
-
-    public void setCar(Car car) {
-        this.car = car;
     }
 
     public DateTime getActualReturnDate() {
@@ -72,10 +63,10 @@ public class RentalRecord {
     }
 
     public String getDetails() {
-        if (this.ActualReturnDate == null && this.rentalFee == null && this.lateFee == null) {
-            String data = "Record ID:\t" + this.rentId
-                    + "\nRent Date:\t" + this.rentDate.toString()
-                    + "\nExpected Return Date:" + this.ExpectedReturnDate.toString();
+        if (this.ActualReturnDate == null || this.rentalFee == null || this.lateFee == null) {
+            String data = "Record ID           : " + this.rentId
+                    + "\nRent Date           : " + this.rentDate.toString()
+                    + "\nExpected Return Date: " + this.ExpectedReturnDate.toString();
             return data;
         }
 
@@ -84,55 +75,23 @@ public class RentalRecord {
                     + "\nRent Date           :  " + this.rentDate.toString()
                     + "\nExpected Return Date:  " + this.ExpectedReturnDate.toString()
                     + "\nActual Return Date  :  " + this.ActualReturnDate.toString()
-                    + "\nRental Fee          :  " + String.format("%.2f", this.rentalFee)
+                    + "\nRental Fee          :  " + String.format("%.2f", calculateBill())
                     + "\nLate Fee            :  " + String.format("%.2f", this.lateFee);
         }
     }
 
-    /*
-     * public boolean rent(String customerId, DateTime rentDate, int numOfRentDay) {
-     * String groupOfCar = this.getCar().getGroup();
-     * switch (groupOfCar) {
-     * case "A":
-     * this.rentalFee = 1.0;
-     * break;
-     * 
-     * case "B":
-     * this.rentalFee = 2.0;
-     * break;
-     * 
-     * case "C":
-     * this.rentalFee = 3.0;
-     * break;
-     * 
-     * case "D":
-     * this.rentalFee = 4.0;
-     * break;
-     * 
-     * case "E":
-     * this.rentalFee = 5.0;
-     * break;
-     * }
-     * 
-     * }
-     */
+    public double calculateBill() {
+        // rent calculation
+        long totalTime = DateTime.diffDays(this.getRentDate(), this.getActualReturnDate());
 
-    /*
-     * public double calculateBill(){
-     * // rent calculation
-     * long rentTime = this.getRentDate();
-     * long returnTime = this.getActualReturnDate();
-     * long totalTime = returnTime - rentTime;
-     * 
-     * if (totalTime != 0){
-     * return (double) (rentalFee*totalTime);
-     * }
-     * 
-     * else{
-     * return this.rentalFee;
-     * }
-     * 
-     * }
-     */
+        if (totalTime != 0) {
+            return (double) (rentalFee * totalTime);
+        }
+
+        else {
+            return this.rentalFee;
+        }
+
+    }
 
 }
