@@ -1,7 +1,7 @@
 public class RentalRecord {
-    private String rentId;
-    private DateTime rentDate, ExpectedReturnDate, ActualReturnDate;
-    private Double rentalFee, lateFee;
+    private String      rentId;
+    private DateTime    rentDate, ExpectedReturnDate, ActualReturnDate;
+    private Double      rentalFee, lateFee;
 
     public RentalRecord(String rentId, DateTime rentDate, DateTime expectedReturnDate) {
         this.rentId = rentId;
@@ -37,6 +37,7 @@ public class RentalRecord {
 
     public void setActualReturnDate(DateTime actualReturnDate) {
         ActualReturnDate = actualReturnDate;
+        this.setLateFee(5.0 * DateTime.diffDays(ExpectedReturnDate, ActualReturnDate));
     }
 
     public Double getRentalFee() {
@@ -71,27 +72,36 @@ public class RentalRecord {
         }
 
         else {
-            return "Record ID             :  " + this.rentId
-                    + "\nRent Date           :  " + this.rentDate.toString()
-                    + "\nExpected Return Date:  " + this.ExpectedReturnDate.toString()
-                    + "\nActual Return Date  :  " + this.ActualReturnDate.toString()
-                    + "\nRental Fee          :  " + String.format("%.2f", calculateBill())
-                    + "\nLate Fee            :  " + String.format("%.2f", this.lateFee);
+            return "Record ID           : " + this.rentId
+                    + "\nRent Date           : " + this.rentDate.toString()
+                    + "\nExpected Return Date: " + this.ExpectedReturnDate.toString()
+                    + "\nActual Return Date  : " + this.ActualReturnDate.toString()
+                    + "\nRental Fee          : "
+                    + String.format("%.2f", this.rentalFee * DateTime.diffDays(rentDate, ExpectedReturnDate))
+                    + "\nLate Fee            : " + String.format("%.2f", this.lateFee);
         }
     }
 
     public double calculateBill() {
         // rent calculation
-        long totalTime = DateTime.diffDays(this.getRentDate(), this.getActualReturnDate());
+        long totalTime = DateTime.diffDays(rentDate, ActualReturnDate);
+        long expected = DateTime.diffDays(rentDate, ExpectedReturnDate);
+        double late = 5.0 * DateTime.diffDays(ExpectedReturnDate, ActualReturnDate);
 
-        if (totalTime != 0) {
+        if (totalTime <= expected) {
             return (double) (rentalFee * totalTime);
+        } else if (totalTime > expected) {
+            return (double) ((rentalFee * expected) + late);
         }
+        return rentalFee;
+    }
 
-        else {
-            return this.rentalFee;
-        }
+    public Double getLateFee() {
+        return lateFee;
+    }
 
+    public void setLateFee(Double lateFee) {
+        this.lateFee = lateFee;
     }
 
 }

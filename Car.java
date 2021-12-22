@@ -1,11 +1,30 @@
+import java.util.HashMap;
+
 public class Car {
-    private int carID, numOfDoor;
-    private String model, group, fuel;
-    private boolean rentalStatus, maintenanceStatus;
-    protected RentalRecord records[] = new RentalRecord[10];
+    private int             carID, numOfDoor; //carID auto increment
+    private String          model, group, fuel;
+    private boolean         rentalStatus, maintenanceStatus;
+    protected RentalRecord  records[] = new RentalRecord[10];
+
+    /*
+     * HashMap to store rental rate for each car group
+     */
+    HashMap<String, Double> rentRate = new HashMap<String, Double>() {
+        {
+            put("A", 1.0);
+            put("B", 2.0);
+            put("C", 3.0);
+            put("D", 4.0);
+            put("E", 5.0);
+        }
+    };
 
     public Car(int carID, int numOfDoor, String model, String group, String fuel, boolean rentalStatus,
             boolean maintenanceStatus) {
+        if (isGroupValid(group) == null) {
+            throw new IllegalArgumentException(
+                    group + " is not a valid group. Group must be between A and E inclusive");
+        }
         this.carID = carID;
         this.numOfDoor = numOfDoor;
         this.model = model;
@@ -21,10 +40,6 @@ public class Car {
 
     public void setCarID(int carID) {
         this.carID = carID;
-    }
-
-    public Car() {
-
     }
 
     public int getNumOfDoor() {
@@ -75,19 +90,31 @@ public class Car {
         this.maintenanceStatus = maintenanceStatus;
     }
 
-    @Override
-    public String toString() {
-        return "Car [carID=" + carID + ", fuel=" + fuel + ", group=" + group + ", maintenanceStatus="
-                + maintenanceStatus + ", model=" + model + ", numOfDoor=" + numOfDoor + ", rentalStatus=" + rentalStatus
-                + "]";
+    public RentalRecord[] getRecords() {
+        return records;
     }
 
-    public boolean rent(String customerId, DateTime rentDate, int numOfRentDay) {
+    public void setRecords(RentalRecord[] records) {
+        this.records = records;
+    }
+
+    @Override
+    public String toString() {
+        return "Car [carID=" + carID + ", model=" + model
+                + ", numOfDoor=" + numOfDoor + ", fuel=" + fuel
+                + ", group=" + group + ", maintenanceStatus="
+                + maintenanceStatus + ", rentalStatus=" + rentalStatus + "]";
+    }
+
+    /*
+     * Method used to create a new rental record by renting
+     */
+    public void rent(String customerId, DateTime rentDate, int numOfRentDay) {
         String groupOfCar = this.getGroup();
         int recordIndex = this.getLastElementIndex() + 1;
 
         if (this.isMaintenanceStatus() == true || this.isRentalStatus() == true) {
-            return false;
+            throw new IllegalArgumentException(this.carID + " is not available for rent");
 
         } else {
             String rentId = this.getCarID() +
@@ -97,34 +124,16 @@ public class Car {
             this.records[recordIndex] = new RentalRecord(rentId, rentDate,
                     new DateTime(rentDate, numOfRentDay));
             this.rentalStatus = true;
+            this.records[recordIndex].setRentalFee(rentRate.get(groupOfCar));
         }
-
-        switch (groupOfCar) {
-            case "A":
-                this.records[recordIndex].setRentalFee(1.0);
-                break;
-
-            case "B":
-                this.records[recordIndex].setRentalFee(2.0);
-                break;
-
-            case "C":
-                this.records[recordIndex].setRentalFee(3.0);
-                break;
-
-            case "D":
-                this.records[recordIndex].setRentalFee(4.0);
-                break;
-
-            case "E":
-                this.records[recordIndex].setRentalFee(5.0);
-                break;
-        }
-
-        return true;
     }
 
-    /**
+    public void returnCar(int index, DateTime returnDate) {
+        this.records[index].setActualReturnDate(returnDate);
+        this.setRentalStatus(false);
+    }
+
+    /*
      * Method used to get last element index
      */
     public int getLastElementIndex() {
@@ -134,12 +143,16 @@ public class Car {
         return index - 1;
     }
 
-    public RentalRecord[] getRecords() {
-        return records;
-    }
-
-    public void setRecords(RentalRecord[] records) {
-        this.records = records;
+    /*
+     * Method used to check if the car's group attribute is within "A" and "E"
+     */
+    public String isGroupValid(String gc) {
+        for (String i : rentRate.keySet()) {
+            if (gc == i) {
+                return i;
+            }
+        }
+        return null;
     }
 
     /*
@@ -147,12 +160,13 @@ public class Car {
      * add()
      * update()
      * remove()
-     * SearchID()
-     * View()
+     * SearchID()-----loop----usage of isIdValid()
+     * View()----loop
      * isIdValid()
-     * isGroupValid()
+     * isGroupValid()--------DONE
      * isRented()
      * isInMaintenance()
+     * returnCar()-----------DONE
      */
 
 }

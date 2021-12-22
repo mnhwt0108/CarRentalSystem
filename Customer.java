@@ -3,11 +3,10 @@ public class Customer {
     private String Name, contactNo;
     private int Bill;
 
-    public Customer(int iD, String name, String contactNo, int bill) {
+    public Customer(int iD, String name, String contactNo) {
         ID = iD;
         Name = name;
         this.contactNo = contactNo;
-        Bill = bill;
     }
 
     public int getID() {

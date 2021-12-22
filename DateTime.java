@@ -12,12 +12,12 @@ public class DateTime {
     }
 
     public DateTime(int setClockForwardInDays) {
-        advance = ((setClockForwardInDays * 24L + 0) * 60L) * 60000L;
+        advance = ((setClockForwardInDays * 24L) * 60L) * 60000L;
         time = System.currentTimeMillis() + advance;
     }
 
     public DateTime(DateTime startDate, int setClockForwardInDays) {
-        advance = ((setClockForwardInDays * 24L + 0) * 60L) * 60000L;
+        advance = ((setClockForwardInDays * 24L) * 60L) * 60000L;
         time = startDate.getTime() + advance;
     }
 
