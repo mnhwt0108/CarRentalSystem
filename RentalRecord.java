@@ -1,7 +1,7 @@
 public class RentalRecord {
-    private String      rentId;
-    private DateTime    rentDate, ExpectedReturnDate, ActualReturnDate;
-    private Double      rentalFee, lateFee;
+    private String rentId;
+    private DateTime rentDate, ExpectedReturnDate, ActualReturnDate;
+    private Double rentalFee, lateFee;
 
     public RentalRecord(String rentId, DateTime rentDate, DateTime expectedReturnDate) {
         this.rentId = rentId;
@@ -100,7 +100,7 @@ public class RentalRecord {
         return lateFee;
     }
 
-    public void setLateFee(Double lateFee) {
+    private void setLateFee(Double lateFee) {
         this.lateFee = lateFee;
     }
 

@@ -1,10 +1,10 @@
 import java.util.HashMap;
 
 public class Car {
-    private int             carID, numOfDoor; //carID auto increment
-    private String          model, group, fuel;
-    private boolean         rentalStatus, maintenanceStatus;
-    protected RentalRecord  records[] = new RentalRecord[10];
+    private int numOfDoor;
+    private String carID, model, group, fuel;
+    private boolean rentalStatus, maintenanceStatus;
+    protected RentalRecord records[] = new RentalRecord[10];
 
     /*
      * HashMap to store rental rate for each car group
@@ -19,13 +19,13 @@ public class Car {
         }
     };
 
-    public Car(int carID, int numOfDoor, String model, String group, String fuel, boolean rentalStatus,
+    public Car(int numOfDoor, String model, String group, String fuel, boolean rentalStatus,
             boolean maintenanceStatus) {
         if (isGroupValid(group) == null) {
             throw new IllegalArgumentException(
                     group + " is not a valid group. Group must be between A and E inclusive");
         }
-        this.carID = carID;
+        this.carID = "C#" + IdProvider.getCarInstance().getCarUniqueId(); // auto increment of car's ID
         this.numOfDoor = numOfDoor;
         this.model = model;
         this.group = group;
@@ -34,12 +34,22 @@ public class Car {
         this.maintenanceStatus = maintenanceStatus;
     }
 
-    public int getCarID() {
-        return carID;
+    /*
+    * Method used to update car's attribute
+    */
+    public void setCar(int numOfDoor, String model, String group, String fuel) {
+        if (isGroupValid(group) == null) {
+            throw new IllegalArgumentException(
+                    group + " is not a valid group. Group must be between A and E inclusive");
+        }
+        this.numOfDoor = numOfDoor;
+        this.model = model;
+        this.group = group;
+        this.fuel = fuel;
     }
 
-    public void setCarID(int carID) {
-        this.carID = carID;
+    public String getCarID() {
+        return carID;
     }
 
     public int getNumOfDoor() {
@@ -128,6 +138,9 @@ public class Car {
         }
     }
 
+    /*
+     * Method used to return car after done renting
+     */
     public void returnCar(int index, DateTime returnDate) {
         this.records[index].setActualReturnDate(returnDate);
         this.setRentalStatus(false);
@@ -156,17 +169,58 @@ public class Car {
     }
 
     /*
-     * TO DO:
-     * add()
-     * update()
-     * remove()
-     * SearchID()-----loop----usage of isIdValid()
-     * View()----loop
-     * isIdValid()
-     * isGroupValid()--------DONE
-     * isRented()
-     * isInMaintenance()
-     * returnCar()-----------DONE
+     * Method to sets the car maintenance status to available after maintenance
      */
+    public void performMaintenance() {
+        if (this.maintenanceStatus == true || this.rentalStatus == true) {
+            this.maintenanceStatus = false;
+        } else {
+            this.maintenanceStatus = true;
+        }
+    }
 
+    /*
+     * Method to check if a car is in maintenance
+     */
+    public boolean isInMaintenance() {
+        if (this.maintenanceStatus == true) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * Method to check if a car is rented
+     */
+    public boolean isRented() {
+        if (this.rentalStatus == true) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * Method to check if a car's ID is valid (containing C#)
+     */
+    public boolean isIdValid() {
+        if (this.carID.contains("C#")) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * TO DO:
+     * add()(moved to App)
+     * update()(moved to App)
+     * remove()(moved to App)
+     * SearchID()-----loop----usage of isIdValid()
+     * View()----loop(moved to App)(moved to App)
+     * performMaintenance()----DONE
+     * isIdValid()-------------DONE
+     * isGroupValid()----------DONE
+     * isRented()--------------DONE
+     * isInMaintenance()-------DONE
+     * returnCar()-------------DONE
+     */
 }

@@ -1,20 +1,20 @@
 public class Customer {
-    private int ID;
-    private String Name, contactNo;
+    private String ID, Name, contactNo;
     private int Bill;
 
-    public Customer(int iD, String name, String contactNo) {
-        ID = iD;
+    public Customer(String name, String contactNo) {
+        ID = "Cus#" + IdProvider.getCusInstance().getCusUniqueId(); // auto increment of customer's ID
         Name = name;
         this.contactNo = contactNo;
     }
 
-    public int getID() {
-        return ID;
+    public void setCus(String name, String contactNo) {
+        this.Name = name;
+        this.contactNo = contactNo;
     }
 
-    public void setID(int iD) {
-        ID = iD;
+    public String getID() {
+        return ID;
     }
 
     public String getName() {
@@ -48,11 +48,7 @@ public class Customer {
 
     /*
      * TO DO:
-     * add()
-     * update()
-     * remove()
-     * SearchID()
-     * View()
+     * pay()
      */
 
 }
