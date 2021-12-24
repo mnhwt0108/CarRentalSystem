@@ -7,10 +7,6 @@ public class DateTime {
     private long advance;
     private long time;
 
-    public DateTime() {
-        time = System.currentTimeMillis();
-    }
-
     public DateTime(int setClockForwardInDays) {
         advance = ((setClockForwardInDays * 24L) * 60L) * 60000L;
         time = System.currentTimeMillis() + advance;
@@ -29,19 +25,8 @@ public class DateTime {
         return time;
     }
 
-    // get the name of the day of the DateTime object
-    public String getNameOfDay() {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
-        return sdf.format(time);
-    }
-
     public String toString() {
         return getFormattedDate();
-    }
-
-    public static String getCurrentTime() {
-        Date date = new Date(System.currentTimeMillis()); // returns current Date/Time
-        return date.toString();
     }
 
     public String getFormattedDate() {
@@ -83,8 +68,4 @@ public class DateTime {
         time = date.getTime();
     }
 
-    // Advances date/time by specified days, hours and mins for testing purposes
-    public void setAdvance(int days, int hours, int mins) {
-        advance = ((days * 24L + hours) * 60L) * 60000L;
-    }
 }
