@@ -1,9 +1,10 @@
 /*
- * Class used to manage the IDs for all objects using singleton-pattern
+ * Class used to handle the IDs for all objects using singleton-pattern
  */
 public class IdProvider {
 
     private static IdProvider instanceCar = null;
+    private int nextCarId = 1;
 
     /*
      * Method used to generate instances of objects in order to manage all IDs
@@ -15,8 +16,6 @@ public class IdProvider {
 
         return instanceCar;
     }
-
-    private int nextCarId = 0;
 
     /*
      * Method used to generate unique IDs
@@ -37,6 +36,7 @@ public class IdProvider {
      * Same as above but for the "customer" class
      */
     private static IdProvider instanceCus = null;
+    private int nextCusId = 1;
 
     public static IdProvider getCusInstance() {
         if (instanceCus == null) {
@@ -45,8 +45,6 @@ public class IdProvider {
 
         return instanceCus;
     }
-
-    private int nextCusId = 0;
 
     public int getCusUniqueId() {
         if (nextCusId < 0) {

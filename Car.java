@@ -35,8 +35,8 @@ public class Car {
     }
 
     /*
-    * Method used to update car's attribute
-    */
+     * Method used to update car's attribute
+     */
     public void setCar(int numOfDoor, String model, String group, String fuel) {
         if (isGroupValid(group) == null) {
             throw new IllegalArgumentException(
@@ -141,9 +141,10 @@ public class Car {
     /*
      * Method used to return car after done renting
      */
-    public void returnCar(int index, DateTime returnDate) {
+    public RentalRecord returnC(int index, DateTime returnDate) {
         this.records[index].setActualReturnDate(returnDate);
         this.setRentalStatus(false);
+        return records[index];
     }
 
     /*
