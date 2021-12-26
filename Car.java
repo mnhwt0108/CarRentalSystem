@@ -19,19 +19,22 @@ public class Car {
         }
     };
 
-    public Car(int numOfDoor, String model, String group, String fuel, boolean rentalStatus,
-            boolean maintenanceStatus) {
+    public Car(int numOfDoor, String model, String group, String fuel) {
         if (isGroupValid(group) == null) {
             throw new IllegalArgumentException(
                     group + " is not a valid group. Group must be between A and E inclusive");
+        }
+        if (isFuelValid(fuel) == false) {
+            throw new IllegalArgumentException(
+                    fuel + " is not a valid fuel. Fuel must be either '1.5 litters' or '6 cylinders' inclusive");
         }
         this.carID = "C#" + IdProvider.getCarInstance().getCarUniqueId(); // auto increment of car's ID
         this.numOfDoor = numOfDoor;
         this.model = model;
         this.group = group;
         this.fuel = fuel;
-        this.rentalStatus = rentalStatus;
-        this.maintenanceStatus = maintenanceStatus;
+        this.rentalStatus = false;
+        this.maintenanceStatus = false;
     }
 
     /*
@@ -170,6 +173,16 @@ public class Car {
     }
 
     /*
+     * Method used to check if the car's fuel attribute is valid
+     */
+    public Boolean isFuelValid(String fuel) {
+        if (fuel.equalsIgnoreCase("1.5 litters") || fuel.equalsIgnoreCase("6 cylinders")) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
      * Method to sets the car maintenance status to available after maintenance
      */
     public void performMaintenance() {
@@ -181,47 +194,10 @@ public class Car {
     }
 
     /*
-     * Method to check if a car is in maintenance
-     */
-    public boolean isInMaintenance() {
-        if (this.maintenanceStatus == true) {
-            return true;
-        }
-        return false;
-    }
-
-    /*
-     * Method to check if a car is rented
-     */
-    public boolean isRented() {
-        if (this.rentalStatus == true) {
-            return true;
-        }
-        return false;
-    }
-
-    /*
-     * Method to check if a car's ID is valid (containing C#)
-     */
-    public boolean isIdValid() {
-        if (this.carID.contains("C#")) {
-            return true;
-        }
-        return false;
-    }
-
-    /*
      * TO DO:
-     * add()(moved to App)
-     * update()(moved to App)
-     * remove()(moved to App)
-     * SearchID()-----loop----usage of isIdValid()
-     * View()----loop(moved to App)(moved to App)
+     * rent()------------------DONE
      * performMaintenance()----DONE
-     * isIdValid()-------------DONE
      * isGroupValid()----------DONE
-     * isRented()--------------DONE
-     * isInMaintenance()-------DONE
      * returnCar()-------------DONE
      */
 }

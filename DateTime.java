@@ -52,8 +52,8 @@ public class DateTime {
         final int SECONDS_IN_MINUTES = 60;
         final int MILLISECONDS_IN_SECOND = 1000;
         long convertToDays = HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTES * MILLISECONDS_IN_SECOND;
-        long hirePeriod = endDate.getTime() - startDate.getTime();
-        double difference = (double) hirePeriod / (double) convertToDays;
+        long gap = endDate.getTime() - startDate.getTime();
+        double difference = (double) gap / (double) convertToDays;
         int round = (int) Math.round(difference);
         return round;
     }

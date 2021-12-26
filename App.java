@@ -15,16 +15,16 @@ public class App {
     @Override
     public String toString() {
         return "App ["
-                + "\nCar List       : " + carList
-                + "\nCustomer List  :" + cusList + "\n]";
+                + "\nCar List       : \n\t" + carList
+                + "\nCustomer List  : \n\t" + cusList
+                + "\n]";
     }
 
     /*
      * Method used to add a car into the car list
      */
-    public void addCar(int numOfDoor, String model, String group, String fuel, boolean rentalStatus,
-            boolean maintenanceStatus) {
-        Car car = new Car(numOfDoor, model, group, fuel, rentalStatus, maintenanceStatus);
+    public void addCar(int numOfDoor, String model, String group, String fuel) {
+        Car car = new Car(numOfDoor, model, group, fuel);
         carList.put(nextIdCarList, car);
         nextIdCarList++;
     }
@@ -119,7 +119,7 @@ public class App {
                 if (carList.get(id).records[i] == null) {
                     break;
                 }
-                System.out.println(carList.get(id).records[i].getDetails());
+                carList.get(id).records[i].getDetails();
             }
         }
     }
@@ -131,12 +131,12 @@ public class App {
     public void viewRecord(int id, int index) throws Exception {
         if (carList.containsKey(id)) {
             if (carList.get(id).records[index] != null)
-                System.out.println(carList.get(id).records[index].getDetails());
+                carList.get(id).records[index].getDetails();
         }
     }
 
     /*
-     * Method used to rent a car by calling the method rent in class Car
+     * Method used to rent a car
      */
     public void rentCar(int id, int cusId, int date, int month, int year, int numOfRentDay) throws Exception {
         if (carList.containsKey(id) && cusList.containsKey(cusId)) {
@@ -154,7 +154,45 @@ public class App {
         if (carList.containsKey(id)) {
             DateTime returnDate = new DateTime(date, month, year);
             carList.get(id).returnC(index, returnDate).calculateBill();
+            // Print out bill
+            System.out.println("\nBill*******************************************");
             viewRecord(id, index);
+            System.out.println("***********************************************");
+        }
+    }
+
+    /*
+     * Method used to perform a maintenance on a car
+     */
+    public void maintenanceCar(int id) throws Exception {
+        if (carList.containsKey(id)) {
+            carList.get(id).performMaintenance();
+        }
+    }
+
+    /*
+     * Method used to check if a car is rented
+     */
+    public void checkRented(int id) throws Exception {
+        if (carList.containsKey(id)) {
+            if (carList.get(id).isRentalStatus() == true) {
+                System.out.println("Car " + carList.get(id).getCarID() + " is currently being rented.");
+            } else {
+                System.out.println("Car " + carList.get(id).getCarID() + " is NOT currently being rented.");
+            }
+        }
+    }
+
+    /*
+     * Method used to check if a car is in maintenance
+     */
+    public void checkMaintenance(int id) throws Exception {
+        if (carList.containsKey(id)) {
+            if (carList.get(id).isMaintenanceStatus() == true) {
+                System.out.println("Car " + carList.get(id).getCarID() + " is currently in maintenance.");
+            } else {
+                System.out.println("Car " + carList.get(id).getCarID() + " is NOT currently in maintenance.");
+            }
         }
     }
 
@@ -162,34 +200,16 @@ public class App {
 
         App test = new App();
 
-        test.addCar(6, "ABC", "A", "1.5 litters", false, false);
+        test.addCar(6, "ABC", "A", "1.5 litters");
         test.addCus("Sy", "123456");
-        // System.out.println("\n*********************\n" + test);
-        // test.rentCar(1, 1, 18, 12, 2021, 3);
-        System.out.println("\n*******************");
-        test.viewCar(1);
-        test.updateCar(1, 4, "CBA", "C", "6 cylinders");
-        System.out.println("\n*******************");
-        test.viewCar(1);
-        System.out.println("\n\n\n*******************");
-        test.viewCus(1);
-        test.updateCus(1, "Syx", "654321");
-        System.out.println("\n*******************");
-        test.viewCus(1);
-        // test.returnCar(1, 0, 21, 12, 2021);
-        System.out.println("\n\n\n*********************\n" + test);
-        test.removeCar(1);
-        System.out.println("\n\n\n*********************\n" + test);
-        test.removeCus(1);
-        System.out.println("\n\n\n*********************\n" + test);
+        System.out.println(test);
 
-        // test.searchCarId(1);
-        // System.out.println("\n*******************");
-        // test.viewRentalRecord(1);
-        // System.out.println("\n*******************");
-        // test.viewCar(1);
-        // System.out.println("\n*******************");
-        // test.viewCus(1);
+        try {
+            test.addCar(6, "ABC", "A", "1 litters");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
     }
 }
 

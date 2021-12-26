@@ -3,12 +3,14 @@ public class RentalRecord {
     private DateTime rentDate, ExpectedReturnDate, ActualReturnDate;
     private Double rentalFee, lateFee;
 
+    // use when a new rental record is generated or when the car haven't been returned
     public RentalRecord(String rentId, DateTime rentDate, DateTime expectedReturnDate) {
         this.rentId = rentId;
         this.rentDate = rentDate;
         this.ExpectedReturnDate = expectedReturnDate;
     }
 
+    // use when a car have been returned
     public void setData(DateTime actualReturnDate, Double rentalFee, Double lateFee) {
         this.ActualReturnDate = actualReturnDate;
         this.rentalFee = rentalFee;
@@ -63,22 +65,23 @@ public class RentalRecord {
         }
     }
 
-    public String getDetails() {
+    
+    public void getDetails() {
         if (this.ActualReturnDate == null || this.rentalFee == null || this.lateFee == null) {
             String data = "Record ID           : " + this.rentId
                     + "\nRent Date           : " + this.rentDate.toString()
                     + "\nExpected Return Date: " + this.ExpectedReturnDate.toString();
-            return data;
+            System.out.println(data);
         }
 
         else {
-            return "Record ID           : " + this.rentId
-                    + "\nRent Date           : " + this.rentDate.toString()
-                    + "\nExpected Return Date: " + this.ExpectedReturnDate.toString()
-                    + "\nActual Return Date  : " + this.ActualReturnDate.toString()
-                    + "\nRental Fee          : "
-                    + String.format("%.2f", this.rentalFee * DateTime.diffDays(rentDate, ExpectedReturnDate))
-                    + "\nLate Fee            : " + String.format("%.2f", this.lateFee);
+            System.out.printf("%-22s%-18s  *\n", "*   Record ID           : ", this.rentId);
+            System.out.printf("%-22s%-18s  *\n", "*   Rent Date           : ", this.rentDate.toString());
+            System.out.printf("%-22s%-18s  *\n", "*   Expected Return Date: ", this.ExpectedReturnDate.toString());
+            System.out.printf("%-22s%-18s  *\n", "*   Actual Return Date  : ", this.ActualReturnDate.toString());
+            System.out.printf("%-22s%-18s  *\n", "*   Rental Fee          : ",
+                    String.format("%.2f", this.rentalFee * DateTime.diffDays(rentDate, ExpectedReturnDate)));
+            System.out.printf("%-22s%-18s  *\n", "*   Late Fee            : ", String.format("%.2f", this.lateFee));
         }
     }
 
