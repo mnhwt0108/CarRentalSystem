@@ -2,8 +2,8 @@ import java.util.HashMap;
 
 public class Car {
     private int numOfDoor;
-    private String carID, model, group, fuel;
-    private boolean rentalStatus, maintenanceStatus;
+    private String carID, model, group, fuel, branch;
+    private String Status;
     protected RentalRecord records[] = new RentalRecord[10];
 
     /*
@@ -19,7 +19,7 @@ public class Car {
         }
     };
 
-    public Car(int numOfDoor, String model, String group, String fuel) {
+    public Car(int numOfDoor, String model, String group, String fuel, String branch) {
         if (isGroupValid(group) == null) {
             throw new IllegalArgumentException(
                     group + " is not a valid group. Group must be between A and E inclusive");
@@ -33,8 +33,24 @@ public class Car {
         this.model = model;
         this.group = group;
         this.fuel = fuel;
-        this.rentalStatus = false;
-        this.maintenanceStatus = false;
+        this.branch = branch;
+        this.Status = "RENT-READY";
+    }
+
+    public String getStatus() {
+        return Status;
+    }
+
+    public void setStatus(String status) {
+        this.Status = status;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
     /*
@@ -87,22 +103,6 @@ public class Car {
         this.fuel = fuel;
     }
 
-    public boolean isRentalStatus() {
-        return rentalStatus;
-    }
-
-    public void setRentalStatus(boolean rentalStatus) {
-        this.rentalStatus = rentalStatus;
-    }
-
-    public boolean isMaintenanceStatus() {
-        return maintenanceStatus;
-    }
-
-    public void setMaintenanceStatus(boolean maintenanceStatus) {
-        this.maintenanceStatus = maintenanceStatus;
-    }
-
     public RentalRecord[] getRecords() {
         return records;
     }
@@ -113,10 +113,9 @@ public class Car {
 
     @Override
     public String toString() {
-        return "Car [carID=" + carID + ", model=" + model
-                + ", numOfDoor=" + numOfDoor + ", fuel=" + fuel
-                + ", group=" + group + ", maintenanceStatus="
-                + maintenanceStatus + ", rentalStatus=" + rentalStatus + "]";
+        return "Car [carID=" + carID + ", fuel=" + fuel + ", group="
+                + group + ", model=" + model + ", numOfDoor=" + numOfDoor + ", branch=" + branch
+                + ", Status=" + Status + "]";
     }
 
     /*
@@ -125,8 +124,9 @@ public class Car {
     public void rent(String customerId, DateTime rentDate, int numOfRentDay) {
         String groupOfCar = this.getGroup();
         int recordIndex = this.getLastElementIndex() + 1;
+        String temp = "rent";
 
-        if (this.isMaintenanceStatus() == true || this.isRentalStatus() == true) {
+        if (this.getStatus() != "RENT-READY") {
             throw new IllegalArgumentException(this.carID + " is not available for rent");
 
         } else {
@@ -134,19 +134,53 @@ public class Car {
                     "_" + customerId +
                     "_" + rentDate.getEightDigitDate();
 
-            this.records[recordIndex] = new RentalRecord(rentId, rentDate,
+            this.records[recordIndex] = new RentalRecord(rentId, temp, rentDate,
                     new DateTime(rentDate, numOfRentDay));
-            this.rentalStatus = true;
+            this.Status = "PICKED-UP";
             this.records[recordIndex].setRentalFee(rentRate.get(groupOfCar));
         }
     }
 
     /*
+     * Method used to create a new rental record by renting
+     */
+    public void reserve(String customerId, DateTime rentDate, int numOfRentDay) {
+        String groupOfCar = this.getGroup();
+        int recordIndex = this.getLastElementIndex() + 1;
+        String temp = "reserve";
+
+        if (this.getStatus() != "RENT-READY") {
+            throw new IllegalArgumentException(this.carID + " is not available for rent");
+
+        } else {
+            String rentId = this.getCarID() +
+                    "_" + customerId +
+                    "_" + rentDate.getEightDigitDate() +
+                    "_" + recordIndex;
+
+            this.records[recordIndex] = new RentalRecord(rentId, temp, rentDate,
+                    new DateTime(rentDate, numOfRentDay));
+            this.Status = "RESERVED";
+            this.records[recordIndex].setRentalFee(rentRate.get(groupOfCar));
+        }
+    }
+
+    public void pickUp() {
+        if (this.getStatus() != "RENT-READY") {
+            throw new IllegalArgumentException(this.carID + " is not available for pickup");
+        }
+        this.setStatus("PICKED-UP");
+    }
+
+    /*
      * Method used to return car after done renting
      */
-    public RentalRecord returnC(int index, DateTime returnDate) {
+    public RentalRecord returnC(int index, DateTime returnDate, String returnBranch) {
         this.records[index].setActualReturnDate(returnDate);
-        this.setRentalStatus(false);
+        this.setStatus("RETURNED");
+        if (returnBranch != this.branch) {
+            this.branch = returnBranch;
+        }
         return records[index];
     }
 
@@ -180,17 +214,6 @@ public class Car {
             return true;
         }
         return false;
-    }
-
-    /*
-     * Method to sets the car maintenance status to available after maintenance
-     */
-    public void performMaintenance() {
-        if (this.maintenanceStatus == true || this.rentalStatus == true) {
-            this.maintenanceStatus = false;
-        } else {
-            this.maintenanceStatus = true;
-        }
     }
 
     /*

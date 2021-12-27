@@ -1,13 +1,24 @@
 public class RentalRecord {
     private String rentId;
+    private String rentalType;
     private DateTime rentDate, ExpectedReturnDate, ActualReturnDate;
     private Double rentalFee, lateFee;
 
-    // use when a new rental record is generated or when the car haven't been returned
-    public RentalRecord(String rentId, DateTime rentDate, DateTime expectedReturnDate) {
+    // use when a new rental record is generated or when the car haven't been
+    // returned
+    public RentalRecord(String rentId, String rentalType, DateTime rentDate, DateTime expectedReturnDate) {
         this.rentId = rentId;
         this.rentDate = rentDate;
         this.ExpectedReturnDate = expectedReturnDate;
+        this.rentalType = rentalType;
+    }
+
+    public String getRentalType() {
+        return rentalType;
+    }
+
+    public void setRentalType(String rentalType) {
+        this.rentalType = rentalType;
     }
 
     // use when a car have been returned
@@ -39,7 +50,13 @@ public class RentalRecord {
 
     public void setActualReturnDate(DateTime actualReturnDate) {
         ActualReturnDate = actualReturnDate;
-        this.setLateFee(5.0 * DateTime.diffDays(ExpectedReturnDate, ActualReturnDate));
+        double tempLateFee = 5.0 * DateTime.diffDays(ExpectedReturnDate, ActualReturnDate);
+        if (tempLateFee < 0) {
+            this.setLateFee(0.0);
+        } else {
+            this.setLateFee(tempLateFee);
+        }
+
     }
 
     public Double getRentalFee() {
@@ -65,23 +82,23 @@ public class RentalRecord {
         }
     }
 
-    
     public void getDetails() {
         if (this.ActualReturnDate == null || this.rentalFee == null || this.lateFee == null) {
             String data = "Record ID           : " + this.rentId
+                    + "\nRental type         : " + this.rentalType
                     + "\nRent Date           : " + this.rentDate.toString()
                     + "\nExpected Return Date: " + this.ExpectedReturnDate.toString();
             System.out.println(data);
         }
 
         else {
-            System.out.printf("%-22s%-18s  *\n", "*   Record ID           : ", this.rentId);
-            System.out.printf("%-22s%-18s  *\n", "*   Rent Date           : ", this.rentDate.toString());
-            System.out.printf("%-22s%-18s  *\n", "*   Expected Return Date: ", this.ExpectedReturnDate.toString());
-            System.out.printf("%-22s%-18s  *\n", "*   Actual Return Date  : ", this.ActualReturnDate.toString());
-            System.out.printf("%-22s%-18s  *\n", "*   Rental Fee          : ",
+            System.out.printf("*%-22s%-20s  *\n", "   Record ID           : ", this.rentId);
+            System.out.printf("*%-22s%-20s  *\n", "   Rent Date           : ", this.rentDate.toString());
+            System.out.printf("*%-22s%-20s  *\n", "   Expected Return Date: ", this.ExpectedReturnDate.toString());
+            System.out.printf("*%-22s%-20s  *\n", "   Actual Return Date  : ", this.ActualReturnDate.toString());
+            System.out.printf("*%-22s%-20s  *\n", "   Rental Fee          : ",
                     String.format("%.2f", this.rentalFee * DateTime.diffDays(rentDate, ExpectedReturnDate)));
-            System.out.printf("%-22s%-18s  *\n", "*   Late Fee            : ", String.format("%.2f", this.lateFee));
+            System.out.printf("*%-22s%-20s  *\n", "   Late Fee            : ", String.format("%.2f", this.lateFee));
         }
     }
 
@@ -105,6 +122,14 @@ public class RentalRecord {
 
     private void setLateFee(Double lateFee) {
         this.lateFee = lateFee;
+    }
+
+    public String getRentId() {
+        return rentId;
+    }
+
+    public void setRentId(String rentId) {
+        this.rentId = rentId;
     }
 
 }

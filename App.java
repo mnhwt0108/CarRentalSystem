@@ -1,4 +1,6 @@
 import java.util.HashMap;
+import java.util.Scanner;
+import java.util.Map.Entry;
 
 public class App {
 
@@ -20,11 +22,15 @@ public class App {
                 + "\n]";
     }
 
+    public String viewCarList() {
+        return "[Car List        :\n" + carList + "\n]";
+    }
+
     /*
      * Method used to add a car into the car list
      */
-    public void addCar(int numOfDoor, String model, String group, String fuel) {
-        Car car = new Car(numOfDoor, model, group, fuel);
+    public void addCar(int numOfDoor, String model, String group, String fuel, String branch) {
+        Car car = new Car(numOfDoor, model, group, fuel, branch);
         carList.put(nextIdCarList, car);
         nextIdCarList++;
     }
@@ -44,6 +50,8 @@ public class App {
     public void searchCarId(int id) throws Exception {
         if (carList.containsKey(id)) {
             System.out.println(carList.get(id).toString()); // CONSIDER VIEW METHOD HERE
+        } else {
+            throw new IllegalStateException("Car C#" + id + " does NOT exist in the database");
         }
     }
 
@@ -60,9 +68,7 @@ public class App {
      * Method used to remove a specific car with the input of that customer's id
      */
     public void removeCar(int id) throws Exception {
-        if (carList.containsKey(id)) {
-            carList.remove(id);
-        }
+        carList.remove(id);
     }
 
     /*
@@ -70,9 +76,7 @@ public class App {
      * id
      */
     public void removeCus(int id) throws Exception {
-        if (cusList.containsKey(id)) {
-            cusList.remove(id);
-        }
+        cusList.remove(id);
     }
 
     /*
@@ -80,9 +84,7 @@ public class App {
      * along with the attribute needed to be update
      */
     public void updateCar(int id, int numOfDoor, String model, String group, String fuel) throws Exception {
-        if (carList.containsKey(id)) {
-            carList.get(id).setCar(numOfDoor, model, group, fuel);
-        }
+        carList.get(id).setCar(numOfDoor, model, group, fuel);
     }
 
     /*
@@ -110,21 +112,6 @@ public class App {
     }
 
     /*
-     * Method used to view a specific car's rental records details with the input of
-     * id
-     */
-    public void viewRentalRecord(int id) throws Exception {
-        if (carList.containsKey(id)) {
-            for (int i = 0; i < 10; i++) {
-                if (carList.get(id).records[i] == null) {
-                    break;
-                }
-                carList.get(id).records[i].getDetails();
-            }
-        }
-    }
-
-    /*
      * Method used to view a specific rental record of a specific car with the input
      * of id of the car and index of the record
      */
@@ -147,27 +134,83 @@ public class App {
     }
 
     /*
-     * Method used to return a car by calling the method returnC in class Car and
-     * then print out the bill by calling calculateBill in class RentalRecord
+     * Method used to reserve a car
      */
-    public void returnCar(int id, int index, int date, int month, int year) throws Exception {
-        if (carList.containsKey(id)) {
-            DateTime returnDate = new DateTime(date, month, year);
-            carList.get(id).returnC(index, returnDate).calculateBill();
-            // Print out bill
-            System.out.println("\nBill*******************************************");
-            viewRecord(id, index);
-            System.out.println("***********************************************");
+    public void reserveCar(int id, int cusId, int date, int month, int year, int numOfRentDay) throws Exception {
+        if (carList.containsKey(id) && cusList.containsKey(cusId)) {
+            String customerId = cusList.get(cusId).getID();
+            DateTime rentDate = new DateTime(date, month, year);
+            carList.get(id).reserve(customerId, rentDate, numOfRentDay);
         }
     }
 
     /*
-     * Method used to perform a maintenance on a car
+     * Method used to pick up a reserved car
      */
-    public void maintenanceCar(int id) throws Exception {
-        if (carList.containsKey(id)) {
-            carList.get(id).performMaintenance();
+    public void pickUpCar(int carId, int rentIndex) {
+        if (carList.containsKey(carId)) {
+            Car obj = carList.get(carId);
+            obj.records[rentIndex].setRentalType("rent");
+            obj.setStatus("PICKED-UP");
         }
+    }
+
+    /*
+     * Method used to return a car by calling the method returnC in class Car and
+     * then print out the bill by calling calculateBill in class RentalRecord
+     */
+    public void returnCar(int id, int index, int date, int month, int year, String branch) throws Exception {
+        if (carList.containsKey(id)) {
+            DateTime returnDate = new DateTime(date, month, year);
+            carList.get(id).returnC(index, returnDate, branch).calculateBill();
+            // Print out bill
+            System.out.println("\nBill*********************************************");
+            viewRecord(id, index);
+            System.out.println("*************************************************\n");
+        }
+    }
+
+    /*
+     * Method used to inspect a car
+     */
+    public void inspectCar(String status, int id) throws Exception {
+        if (status != "RENT-READY" && status != "SERVICE-NEEDED" && status != "REMOVED") {
+            throw new IllegalArgumentException(
+                    status + " is not a valid status. Status must be either 'RENT-READY', 'SERVICE-NEEDED' or 'REMOVED' inclusive");
+        } else {
+            carList.get(id).setStatus(status);
+        }
+
+    }
+
+    /*
+     * Method used to inspect the whole car list
+     */
+    public void inspectList() throws Exception {
+        System.out.println("\n1: RENT-READY\t2:SERVICE-NEEDED\t3:REMOVED");
+        try (Scanner sc = new Scanner(System.in)) {
+            for (Entry<Integer, Car> set : carList.entrySet()) {
+                if (set.getValue().getStatus() != "RETURNED") {
+                    continue;
+                }
+                System.out.print("Enter the status: ");
+                int temp = sc.nextInt();
+                String input = "test";
+                switch (temp) {
+                    case 1:
+                        input = "RENT-READY";
+                        break;
+                    case 2:
+                        input = "SERVICE-NEEDED";
+                        break;
+                    case 3:
+                        input = "REMOVED";
+                        break;
+                }
+                inspectCar(input, set.getKey());
+            }
+        }
+        System.out.println(viewCarList());
     }
 
     /*
@@ -175,7 +218,7 @@ public class App {
      */
     public void checkRented(int id) throws Exception {
         if (carList.containsKey(id)) {
-            if (carList.get(id).isRentalStatus() == true) {
+            if (carList.get(id).getStatus() != "RENT-READY") {
                 System.out.println("Car " + carList.get(id).getCarID() + " is currently being rented.");
             } else {
                 System.out.println("Car " + carList.get(id).getCarID() + " is NOT currently being rented.");
@@ -188,7 +231,7 @@ public class App {
      */
     public void checkMaintenance(int id) throws Exception {
         if (carList.containsKey(id)) {
-            if (carList.get(id).isMaintenanceStatus() == true) {
+            if (carList.get(id).getStatus() == "SERVICE-NEEDED") {
                 System.out.println("Car " + carList.get(id).getCarID() + " is currently in maintenance.");
             } else {
                 System.out.println("Car " + carList.get(id).getCarID() + " is NOT currently in maintenance.");
@@ -200,15 +243,26 @@ public class App {
 
         App test = new App();
 
-        test.addCar(6, "ABC", "A", "1.5 litters");
+        test.addCar(6, "ABC", "A", "1.5 litters", "A");
         test.addCus("Sy", "123456");
+        test.addCar(6, "ABC2", "B", "1.5 litters", "B");
+
+        // test.removeCar(1);
+        System.out.println("*****");
+        test.searchCarId(1);
+        System.out.println("*****");
         System.out.println(test);
 
-        try {
-            test.addCar(6, "ABC", "A", "1 litters");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        test.reserveCar(1, 1, 28, 12, 2021, 3);
+        test.rentCar(2, 1, 28, 12, 2021, 4);
+        test.viewRecord(1, 0);
+        test.pickUpCar(1, 0);
+        System.out.println("\n*****");
+        test.viewRecord(1, 0);
+        System.out.println("\n*****");
+        test.returnCar(1, 0, 30, 12, 2021, "B");
+
+        test.inspectList();
 
     }
 }

@@ -1,16 +1,12 @@
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 public class DateTime {
 
     private long advance;
     private long time;
-
-    public DateTime(int setClockForwardInDays) {
-        advance = ((setClockForwardInDays * 24L) * 60L) * 60000L;
-        time = System.currentTimeMillis() + advance;
-    }
 
     public DateTime(DateTime startDate, int setClockForwardInDays) {
         advance = ((setClockForwardInDays * 24L) * 60L) * 60000L;
@@ -18,6 +14,11 @@ public class DateTime {
     }
 
     public DateTime(int day, int month, int year) {
+        // CHECK FOR VALID DATE
+        if (day < LocalDateTime.now().getDayOfMonth() || month < LocalDateTime.now().getMonthValue()
+                || year < LocalDateTime.now().getYear()) {
+            throw new IllegalArgumentException(day + "/" + month + "/" + year + " is not a valid date.");
+        }
         setDate(day, month, year);
     }
 
