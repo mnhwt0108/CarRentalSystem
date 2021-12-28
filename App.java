@@ -193,7 +193,7 @@ public class App {
                 if (set.getValue().getStatus() != "RETURNED") {
                     continue;
                 }
-                System.out.print("Enter the status: ");
+                System.out.print("Enter the status for car " + set.getValue().getCarID() + " : ");
                 int temp = sc.nextInt();
                 String input = "test";
                 switch (temp) {
@@ -211,6 +211,22 @@ public class App {
             }
         }
         System.out.println(viewCarList());
+    }
+
+    public void moveCars(String branch, int[] id) throws Exception {
+        int i = 0;
+        for (Entry<Integer, Car> set : carList.entrySet()) {
+            int nextId = id[i];
+            if (set.getKey() != nextId) {
+                continue;
+            }
+            set.getValue().setBranch(branch);
+            System.out.print("*");
+            i++;
+            if (i > id.length) {
+                break;
+            }
+        }
     }
 
     /*
@@ -245,7 +261,10 @@ public class App {
 
         test.addCar(6, "ABC", "A", "1.5 litters", "A");
         test.addCus("Sy", "123456");
-        test.addCar(6, "ABC2", "B", "1.5 litters", "B");
+        test.addCar(6, "ABC-2", "B", "1.5 litters", "B");
+        test.addCar(6, "ABC-3", "B", "1.5 litters", "B");
+        test.addCar(6, "ABC-4", "B", "1.5 litters", "B");
+        test.addCar(6, "ABC-5", "B", "1.5 litters", "B");
 
         // test.removeCar(1);
         System.out.println("*****");
@@ -263,6 +282,9 @@ public class App {
         test.returnCar(1, 0, 30, 12, 2021, "B");
 
         test.inspectList();
+        int[] a = new int[] { 3, 4, 5 };
+        test.moveCars("A", a);
+        System.out.println(test.viewCarList());
 
     }
 }
