@@ -24,7 +24,7 @@ public class Group {
     public Group(String groupId, Branch branch) {
         if (isGroupValid(groupId) == false) {
             throw new IllegalArgumentException(
-                    groupId + " is not a valid group. Group must be between A and E inclusive");
+                    groupId + " is not a valid group. Group must be between A and E inclusive.");
         }
         this.groupId = groupId;
         this.setBranch(branch);
@@ -80,9 +80,8 @@ public class Group {
         return carList;
     }
 
-    public String viewCarList(){
+    public String viewCarList() {
         return this.carList.toString();
     }
 
 }
-

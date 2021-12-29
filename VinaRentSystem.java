@@ -41,11 +41,14 @@ public class VinaRentSystem {
     /*
      * Method used to add a group into the group list
      */
-    public void addGroup(String groupId, int branchId) throws Exception {
-        Branch br = this.brList.get(branchId);
+    public void addGroup(String groupId, String branchId) throws Exception {
+        validBranch(branchId);
+        String temp = branchId.replaceAll("\\D+", "");
+        int numb = Integer.parseInt(temp);
+        Branch br = this.brList.get(numb);
         Group gr = new Group(groupId, br);
         grList.put(nextGrId, gr);
-        brList.get(branchId).addGr(gr);
+        brList.get(numb).addGr(gr);
         nextGrId++;
     }
 
@@ -83,12 +86,18 @@ public class VinaRentSystem {
     /*
      * Method used to pair neighboring branches with each other
      */
-    public void pairNeighborBr(int br1, int br2) throws Exception {
-        Branch temp1 = this.brList.get(br1);
-        Branch temp2 = this.brList.get(br2);
+    public void pairNeighborBr(String br1, String br2) throws Exception {
+        validBranch(br1);
+        validBranch(br2);
+        String temp = br1.replaceAll("\\D+", "");
+        int numb = Integer.parseInt(temp);
+        String temp2 = br2.replaceAll("\\D+", "");
+        int numb2 = Integer.parseInt(temp2);
+        Branch tempBr1 = this.brList.get(numb);
+        Branch tempBr2 = this.brList.get(numb2);
 
-        temp1.setNeighborBrach(temp2.getBranchId());
-        temp2.setNeighborBrach(temp1.getBranchId());
+        tempBr1.setNeighborBrach(tempBr2.getBranchId());
+        tempBr2.setNeighborBrach(tempBr1.getBranchId());
     }
 
     /*
@@ -127,7 +136,7 @@ public class VinaRentSystem {
                 temp.setBranchId(branch);
                 temp.getGroup().remove(temp);
             }
-            temp.returnC(index, returnDate, branch).calculateBill();
+            temp.returnC(index, returnDate, branch);
             // Print out bill
             System.out.println("\nBill*********************************************");
             viewRecord(id, index);
@@ -142,7 +151,7 @@ public class VinaRentSystem {
         String temp = branch.replaceAll("\\D+", "");
         int numb = Integer.parseInt(temp);
         if (brList.containsKey(numb) != true) {
-            throw new IllegalArgumentException(branch + " is not a valid branch");
+            throw new IllegalArgumentException(branch + " is not a valid branch.");
         }
     }
 
@@ -209,8 +218,9 @@ public class VinaRentSystem {
     public void pickUpCar(int carId, int rentIndex) {
         if (carList.containsKey(carId)) {
             Car obj = carList.get(carId);
+            obj.pickUp();
             obj.records[rentIndex].setRentalType("rent");
-            obj.setStatus("PICKED-UP");
+            obj.records[rentIndex].getDetails();
         }
     }
 
@@ -285,7 +295,7 @@ public class VinaRentSystem {
     }
 
     /*
-     * Method used to inspect the whole car list
+     * Method used to inspect every RETURNED car in the car list
      */
     public void inspectList() throws Exception {
         System.out.println("\n1: RENT-READY\t2:SERVICE-NEEDED\t3:REMOVED");
@@ -294,7 +304,7 @@ public class VinaRentSystem {
                 if (set.getValue().getStatus() != "RETURNED") {
                     continue;
                 }
-                System.out.print("Enter the status for car " + set.getValue().getCarNr() + " : ");
+                System.out.print("\nEnter the status for car " + set.getValue().getCarNr() + " : ");
                 int temp = sc.nextInt();
                 String input = "test";
                 switch (temp) {
@@ -309,10 +319,9 @@ public class VinaRentSystem {
                         break;
                 }
                 inspectCar(input, set.getKey());
+                System.out.println(set.getValue().toString());
             }
         }
-        System.out.println(this.carList);
     }
-
 
 }

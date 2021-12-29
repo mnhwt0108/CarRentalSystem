@@ -97,8 +97,9 @@ public class RentalRecord {
             System.out.printf("*%-22s%-20s  *\n", "   Expected Return Date: ", this.ExpectedReturnDate.toString());
             System.out.printf("*%-22s%-20s  *\n", "   Actual Return Date  : ", this.ActualReturnDate.toString());
             System.out.printf("*%-22s%-20s  *\n", "   Rental Fee          : ",
-                    String.format("%.2f", this.rentalFee * DateTime.diffDays(rentDate, ExpectedReturnDate)));
+                    String.format("%.2f", this.rentalFee * DateTime.diffDays(rentDate, ActualReturnDate)));
             System.out.printf("*%-22s%-20s  *\n", "   Late Fee            : ", String.format("%.2f", this.lateFee));
+            System.out.printf("*%-22s%-20s  *\n", "   Total Fee           : ", String.format("%.2f", calculateBill()));
         }
     }
 

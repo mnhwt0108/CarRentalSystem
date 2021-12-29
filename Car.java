@@ -93,7 +93,7 @@ public class Car {
         String temp = "reserve";
 
         if (this.getStatus() != "RENT-READY") {
-            throw new IllegalArgumentException(this.carNr + " is not available for rent");
+            throw new IllegalArgumentException(this.carNr + " is not available for rent.");
 
         } else {
             String rentId = this.getCarNr() +
@@ -105,12 +105,13 @@ public class Car {
                     new DateTime(rentDate, numOfRentDay));
             this.Status = "RESERVED";
             this.records[recordIndex].setRentalFee(this.group.rentRate.get(groupOfCar));
+            this.records[recordIndex].getDetails();
         }
     }
 
     public void pickUp() {
-        if (this.getStatus() != "RENT-READY") {
-            throw new IllegalArgumentException(this.carNr + " is not available for pickup");
+        if (this.getStatus() != "RESERVED") {
+            throw new IllegalArgumentException(this.carNr + " is not available for pickup.");
         }
         this.setStatus("PICKED-UP");
     }

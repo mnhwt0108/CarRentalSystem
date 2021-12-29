@@ -1,7 +1,7 @@
 import java.util.Collection;
 import java.util.HashSet;
 
-public class Model{
+public class Model {
     private String modelNr;
     private String modelName, transmission, fuel;
     private int numOfDoor;
@@ -10,7 +10,12 @@ public class Model{
     public Model(String modelName, String transmission, String fuel, int numOfDoor) {
         if (isFuelValid(fuel) == false) {
             throw new IllegalArgumentException(
-                    fuel + " is not a valid fuel. Fuel must be either '1.5 litters' or '6 cylinders' inclusive");
+                    fuel + " is not a valid fuel. Fuel must be either '1.5 liters' or '6 cylinders' inclusive.");
+        }
+        if (isTransValid(transmission) == false) {
+            throw new IllegalArgumentException(
+                    transmission
+                            + " is not a valid transmission. Transmission must be either 'auto' or 'manual' inclusive.");
         }
         carList = new HashSet<Car>();
         this.modelNr = "M#" + IdProvider.getModelInstance().getModelUniqueId(); // auto increment ID
@@ -58,15 +63,15 @@ public class Model{
 
     @Override
     public String toString() {
-        return "Model [modelId ="+modelNr+ ", modelName="+ modelName + ", transmission="
-                + transmission +  ", fuel=" + fuel
+        return "Model [modelId =" + modelNr + ", modelName=" + modelName + ", transmission="
+                + transmission + ", fuel=" + fuel
                 + ", numOfDoor=" + numOfDoor + "]";
     }
 
     /*
-    * Methods used to represent the one-to-many relationship between car and model
-    */
-    public void addCar(Car car){
+     * Methods used to represent the one-to-many relationship between car and model
+     */
+    public void addCar(Car car) {
         carList.add(car);
     }
 
@@ -78,7 +83,17 @@ public class Model{
      * Method used to check if the car's fuel attribute is valid
      */
     public Boolean isFuelValid(String fuel) {
-        if (fuel.equalsIgnoreCase("1.5 litters") || fuel.equalsIgnoreCase("6 cylinders")) {
+        if (fuel.equalsIgnoreCase("1.5 liters") || fuel.equalsIgnoreCase("6 cylinders")) {
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * Method used to check if the car's fuel attribute is valid
+     */
+    public Boolean isTransValid(String transmission) {
+        if (transmission.equalsIgnoreCase("auto") || transmission.equalsIgnoreCase("manual")) {
             return true;
         }
         return false;
