@@ -56,4 +56,54 @@ public class IdProvider {
 
         return uniqueCusId;
     }
+
+    /*
+     * Same as above but for the "branch" class
+     */
+    private static IdProvider instanceBr = null;
+    private int nextBrId = 1;
+
+    public static IdProvider getBrInstance() {
+        if (instanceBr == null) {
+            instanceBr = new IdProvider();
+        }
+
+        return instanceBr;
+    }
+
+    public int getBrUniqueId() {
+        if (nextBrId < 0) {
+            throw new IllegalStateException("Out of IDs!");
+        }
+
+        int uniqueBrId = nextBrId;
+        nextBrId++;
+
+        return uniqueBrId;
+    }
+
+    /*
+     * Same as above but for the "model" class
+     */
+    private static IdProvider instanceModel = null;
+    private int nextModelId = 1;
+
+    public static IdProvider getModelInstance() {
+        if (instanceModel == null) {
+            instanceModel = new IdProvider();
+        }
+
+        return instanceModel;
+    }
+
+    public int getModelUniqueId() {
+        if (nextModelId < 0) {
+            throw new IllegalStateException("Out of IDs!");
+        }
+
+        int uniqueModelId = nextModelId;
+        nextModelId++;
+
+        return uniqueModelId;
+    }
 }
